@@ -1,8 +1,9 @@
 ---
-- name: Create a Scenario 2 VPC with public and private subnets in two AZs
+- name: Create/delete a Scenario 2 VPC with public and private subnets in two AZs
   hosts: localhost
   connection: local
   gather_facts: yes
 
   roles:
-    - aws-vpc-scenario2
+    - { role: rcrelia.aws-vpc-scenario2, remote_cidr: 1.2.3.4/32, aws_env: dev01, vpc_status: create }
+#   - { role: rcrelia.aws-vpc-scenario2, remote_cidr: 1.2.3.4/32, aws_env: dev01, vpc_status: delete }

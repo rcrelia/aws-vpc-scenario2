@@ -60,8 +60,8 @@ MIT
 Author Information
 ------------------
 
-Rick Crelia
-
-- [https://github.com/rcrelia](https://github.com/rcrelia)
+Please leave any support requests, bug reports or feature proposals in Github:
+- [https://github.com/rcrelia/aws-vpc-scenario2] (https://github.com/rcrelia/aws-vpc-scenario2)
+ 
+- [https://twitter.com/rcrelia](https://github.com/rcrelia)
 - [https://randops.org](https://randops.org)
-- Pull requests are welcomed!
