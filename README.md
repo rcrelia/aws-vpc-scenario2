@@ -73,7 +73,7 @@ Author Information
 ------------------
 
 Rick Crelia
-- [https://twitter.com/rcrelia](https://github.com/rcrelia)
+- [https://twitter.com/rcrelia](https://twitter.com/rcrelia)
 - [https://randops.org](https://randops.org)
 
 Please send support requests, bug reports or feature proposals via Github: [https://github.com/rcrelia/aws-vpc-scenario2] (https://github.com/rcrelia/aws-vpc-scenario2)
