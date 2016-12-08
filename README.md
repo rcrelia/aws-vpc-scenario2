@@ -3,7 +3,7 @@ aws-vpc-scenario2
 
 Ansible v2 role to create a multi-AZ public/private zone VPC with NAT gateways (supports VPC removal as well as buildout). Amazon Web Services describes this as a "Scenario 2" VPC.
 
-More info: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Scenario2.html)
+More info: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Scenario2.html
 
 This role provides:
 
@@ -14,6 +14,8 @@ This role provides:
 - relatively secure network ACLs for public and private subnets
 - two relatively secure VPC security groups for public or private instances
 - consistent and ubiquitous tagging of resources
+
+See this [blog post](https://randops.org/2016/12/08/using-ansible-roles-to-create-a-scenario2-vpc-in-aws/) for more details.
 
 Requirements
 ------------
