@@ -41,13 +41,13 @@ Dependencies
 Example Playbook
 ----------------
 
----
-- name: Create a Scenario 2 VPC with public and private subnets in two AZs
-  hosts: localhost
-  connection: local
-  gather_facts: yes
+  ---
+  - name: Create a Scenario 2 VPC with public and private subnets in two AZs
+    hosts: localhost
+    connection: local
+    gather_facts: yes
 
-  roles:
+    roles:
     - { role: rcrelia.aws-vpc-scenario2, remote_cidr: 1.2.3.4/32, aws_env: dev01, vpc_status: create }
 
 
