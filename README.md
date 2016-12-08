@@ -41,6 +41,10 @@ Dependencies
 Example Playbook
 ----------------
 
+Note: use the appropriate real-world value for your remote_cidr
+
+Role play:
+
 ~~~~
   ---
   - name: Create a Scenario 2 VPC with public and private subnets in two AZs
@@ -52,6 +56,14 @@ Example Playbook
     - { role: rcrelia.aws-vpc-scenario2, remote_cidr: 1.2.3.4/32, aws_env: dev01, vpc_status: create }
 ~~~~
 
+Exact CLI syntax:
+
+~~~~
+  $ ansible-playbook -i tests/inventory tests/site.yml -e "remote_cidr=1.2.3.4/32 aws_env=dev01 vpc_status=create"
+  $ ansible-playbook -i tests/inventory tests/site.yml -e "remote_cidr=1.2.3.4/32 aws_env=dev01 vpc_status=delete"
+~~~~
+
+
 License
 -------
 
@@ -60,8 +72,8 @@ MIT
 Author Information
 ------------------
 
-Please leave any support requests, bug reports or feature proposals in Github:
-- [https://github.com/rcrelia/aws-vpc-scenario2] (https://github.com/rcrelia/aws-vpc-scenario2)
- 
+Rick Crelia
 - [https://twitter.com/rcrelia](https://github.com/rcrelia)
 - [https://randops.org](https://randops.org)
+
+Please send support requests, bug reports or feature proposals via Github: [https://github.com/rcrelia/aws-vpc-scenario2] (https://github.com/rcrelia/aws-vpc-scenario2)
