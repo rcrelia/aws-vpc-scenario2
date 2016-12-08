@@ -4,6 +4,10 @@ galaxy_info:
   description: Ansible v2 role to create/remove a Scenario 2 VPC in AWS
   license: MIT
   min_ansible_version: 2.2
+  platforms:
+  - name: AWS
+    versions:
+    - all
   galaxy_tags:
     - aws
     - cloud
@@ -11,5 +15,4 @@ galaxy_info:
     - networking
     - system
     - vpc
-  platforms: []
   dependencies: []
