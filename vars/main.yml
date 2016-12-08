@@ -1,0 +1,25 @@
+---
+
+# Adjust these to your specific needs...
+
+# AWS parameters
+aws_region: "us-east-1"
+aws_az1: "{{ aws_region }}a"
+aws_az2: "{{ aws_region }}c"
+
+# VPC parameters
+vpc_name: "vpc-{{ aws_env }}"
+vpc_cidr: "10.0.0.0/16"
+
+# Subnet CIDR defs
+public_subnet_az1_cidr:  "10.0.0.0/24"
+public_subnet_az2_cidr:  "10.0.2.0/24"
+private_subnet_az1_cidr: "10.0.1.0/24"
+private_subnet_az2_cidr: "10.0.3.0/24"
+
+# Access location CIDR defs (used in NACLs and SGs)
+public_cidr: "0.0.0.0/0"
+
+# security group parameters
+private_sg_name: "PrivateSecurityGroup"
+public_sg_name:  "PublicSecurityGroup"

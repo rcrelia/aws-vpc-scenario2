@@ -1,0 +1,24 @@
+---
+- include_vars: ../vars/main.yml
+
+# pre-flight checks ###########################################################
+
+- name: Check that a Remote CIDR was passed into the play as an extra variable
+  assert:
+    that: 'remote_cidr is defined'
+
+- name: Check that an environment was passed into the play as an extra variable
+  assert:
+    that: 'aws_env is defined'
+
+- name: Check that a VPC status was passed into the play as an extra variable
+  assert:
+    that: 'vpc_status is defined'
+
+###############################################################################
+
+# Create or delete the VPC
+
+- block:
+  - include: "{{ vpc_status }}.yml"
+    when: vpc_status is defined

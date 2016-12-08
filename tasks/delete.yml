@@ -1,0 +1,159 @@
+# delete the VPC ###############################################################
+
+- name: Get VPC info
+  ec2_vpc_net_facts:
+    filters:
+      "tag:Name": "{{ vpc_name }}"
+  register: myvpc
+
+- name: Get public route table info
+  ec2_vpc_route_table_facts:
+    filters:
+      "tag:Name": "{{ aws_env }}_public_rt"
+  register: public_rt
+
+- name: Get AZ1 private route table info
+  ec2_vpc_route_table_facts:
+    filters:
+      "tag:Name": "{{ aws_env }}_private_rt_az1"
+  register: private_rt_az1
+
+- name: Get AZ2 private route table info
+  ec2_vpc_route_table_facts:
+    filters:
+      "tag:Name": "{{ aws_env }}_private_rt_az2"
+  register: private_rt_az2
+
+- name: Set some VPC-related variables
+  set_fact:
+    nat_gateway_az1_id: "{{ myvpc.vpcs.0.tags.Nat_Az1 }}"
+    nat_gateway_az2_id: "{{ myvpc.vpcs.0.tags.Nat_Az2 }}"
+    vpc_id: "{{ myvpc.vpcs.0.id }}"
+    public_rt_id: "{{ public_rt.route_tables.0.id }}"
+    private_rt_az1_id: "{{ private_rt_az1.route_tables.0.id }}"
+    private_rt_az2_id: "{{ private_rt_az2.route_tables.0.id }}"
+    private_nacl: "{{ vpc_name}}_private_networkacl"
+    public_nacl: "{{ vpc_name}}_public_networkacl"
+
+- name: Remove RDS subnet group for private subnets
+  rds_subnet_group:
+    name: "dbsubnetgroup_{{ vpc_name }}_private"
+    state: "absent"
+  register: delete_dbsubnetgroup_result
+
+- name: Delete private NACL
+  ec2_vpc_nacl:
+    vpc_id: "{{ vpc_id }}"
+    name: "{{ private_nacl }}"
+    state: absent
+
+- name: Delete public NACL
+  ec2_vpc_nacl:
+    vpc_id: "{{ vpc_id }}"
+    name: "{{ public_nacl }}"
+    state: absent
+
+- name: Delete public security group
+  ec2_group:
+    name: "{{ public_sg_name}}"
+    description: "public sg"
+    state: absent
+
+- name: Delete private security group
+  ec2_group:
+    name: "{{ private_sg_name}}"
+    description: "private sg"
+    state: absent
+
+- name: Delete AZ1 NAT Gateway and release EIP
+  ec2_vpc_nat_gateway:
+    state: absent
+    nat_gateway_id: "{{ nat_gateway_az1_id }}"
+    release_eip: yes
+    wait: yes
+    wait_timeout: 300
+
+- name: Delete AZ2 NAT Gateway and release EIP
+  ec2_vpc_nat_gateway:
+    state: absent
+    nat_gateway_id: "{{ nat_gateway_az2_id }}"
+    release_eip: yes
+    wait: yes
+    wait_timeout: 300
+
+- name: Delete public subnet in AZ1
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    cidr: "{{ public_subnet_az1_cidr }}"
+
+- name: Delete public subnet in AZ2
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    cidr: "{{ public_subnet_az2_cidr }}"
+
+- name: Delete private subnet in AZ1
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    cidr: "{{ private_subnet_az1_cidr }}"
+
+- name: Delete private subnet in AZ2
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    cidr: "{{ private_subnet_az2_cidr }}"
+
+# For some reason, ec2_vpc_route_table won't delete these
+# but we'll keep them in here commented out for posterity.
+#
+#- name: Delete public route table
+#  ec2_vpc_route_table:
+#    state: absent
+#    vpc_id: "{{ vpc_id }}"
+#    route_table_id: "{{ public_rt_id }}"
+#  ignore_errors: yes
+#
+#- name: Delete AZ1 private route table
+#  ec2_vpc_route_table:
+#    state: absent
+#    vpc_id: "{{ vpc_id }}"
+#    route_table_id: "{{ private_rt_az1_id }}"
+#  ignore_errors: yes
+#
+#- name: Delete AZ2 private route table
+#  ec2_vpc_route_table:
+#    state: absent
+#    vpc_id: "{{ vpc_id }}"
+#    route_table_id: "{{ private_rt_az2_id }}"
+#  ignore_errors: yes
+#
+# Instead, we will decomm route tables using awscli
+
+- name: Delete public route table via awscli
+  shell: aws ec2 delete-route-table --route-table-id "{{ public_rt_id }}"
+
+- name: Delete AZ1 private route table via awscli
+  shell: aws ec2 delete-route-table --route-table-id "{{ private_rt_az1_id }}"
+
+- name: Delete AZ2 private route table via awscli
+  shell: aws ec2 delete-route-table --route-table-id "{{ private_rt_az2_id }}"
+
+- name: Delete Internet Gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_id }}"
+    state: absent
+
+# let's take 30 seconds to make sure all dependencies are fully inactive
+# before trying to delete the VPC... the NAT Gateway removal is especially
+# non-idempotent so we cannot easily re-run the deletion tasks
+
+- pause:
+    seconds: 30
+
+- name: Delete VPC
+  ec2_vpc_net:
+    state: absent
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"

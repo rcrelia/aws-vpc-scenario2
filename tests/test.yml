@@ -1,0 +1,8 @@
+---
+- name: Create a Scenario 2 VPC with public and private subnets in two AZs
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  roles:
+    - aws-vpc-scenario2

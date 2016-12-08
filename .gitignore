@@ -1,0 +1,11 @@
+# build stuff
+*.py[co]
+build
+# Mac OS X stuff...
+.DS_Store
+# Vim swap files
+*.swp
+*.swo
+# test stuff
+*.retry
+*.out
