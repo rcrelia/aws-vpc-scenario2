@@ -105,40 +105,26 @@
     vpc_id: "{{ vpc_id }}"
     cidr: "{{ private_subnet_az2_cidr }}"
 
-# For some reason, ec2_vpc_route_table won't delete these
-# but we'll keep them in here commented out for posterity.
-#
-#- name: Delete public route table
-#  ec2_vpc_route_table:
-#    state: absent
-#    vpc_id: "{{ vpc_id }}"
-#    route_table_id: "{{ public_rt_id }}"
-#  ignore_errors: yes
-#
-#- name: Delete AZ1 private route table
-#  ec2_vpc_route_table:
-#    state: absent
-#    vpc_id: "{{ vpc_id }}"
-#    route_table_id: "{{ private_rt_az1_id }}"
-#  ignore_errors: yes
-#
-#- name: Delete AZ2 private route table
-#  ec2_vpc_route_table:
-#    state: absent
-#    vpc_id: "{{ vpc_id }}"
-#    route_table_id: "{{ private_rt_az2_id }}"
-#  ignore_errors: yes
-#
-# Instead, we will decomm route tables using awscli
+- name: Delete public route table
+  ec2_vpc_route_table:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    route_table_id: "{{ public_rt_id }}"
+    lookup: "id"
 
-- name: Delete public route table via awscli
-  shell: aws ec2 delete-route-table --route-table-id "{{ public_rt_id }}"
+- name: Delete AZ1 private route table
+  ec2_vpc_route_table:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    route_table_id: "{{ private_rt_az1_id }}"
+    lookup: "id"
 
-- name: Delete AZ1 private route table via awscli
-  shell: aws ec2 delete-route-table --route-table-id "{{ private_rt_az1_id }}"
-
-- name: Delete AZ2 private route table via awscli
-  shell: aws ec2 delete-route-table --route-table-id "{{ private_rt_az2_id }}"
+- name: Delete AZ2 private route table
+  ec2_vpc_route_table:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    route_table_id: "{{ private_rt_az2_id }}"
+    lookup: "id"
 
 - name: Delete Internet Gateway
   ec2_vpc_igw:
